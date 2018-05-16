@@ -28,6 +28,13 @@ if [[ "$#" -eq 0 ]]; then
 	exit
 fi
 
-docker run --rm \
-  -v "$PWD":/src -w /src \
-  "$IMAGE":"$1" "${@:2}"
+ENTRYPOINT="mango"
+if [[ "$#" -ge 2 ]]; then
+	if [[ "$2" == "npm" ]] || [[ "$2" == "node" ]]; then
+		ENTRYPOINT="/usr/bin/env"
+	fi
+fi
+
+docker run --entrypoint "$ENTRYPOINT" --rm \
+	-v "$PWD":/src -w /src \
+	"$IMAGE":"$1" "${@:2}"
